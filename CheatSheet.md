@@ -24,3 +24,14 @@
 * `NAME="Aavi"` - Assigns a variable (NO spaces around the equals sign!).
 * `echo $NAME` - Prints the variable (Must use `$` to call it).
 * `$1`, `$2`, `$3` - Positional arguments. `$1` grabs the first word typed after the script name when running it (e.g., `./script.sh argument1`).
+
+
+# Module 9: Environment Variables
+
+### Managing Variables
+* `printenv` - Displays all currently loaded system environment variables.
+* `export API_KEY="Secret123"` - Creates a temporary environment variable in the current terminal session.
+* `$API_KEY` - How to read an environment variable inside a shell script.
+
+### Security Best Practice
+* Never hardcode sensitive data (passwords, API keys, database URLs) directly into your code. Store them as Environment Variables on the server so your code can read them safely!
