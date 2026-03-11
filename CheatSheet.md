@@ -35,3 +35,17 @@
 
 ### Security Best Practice
 * Never hardcode sensitive data (passwords, API keys, database URLs) directly into your code. Store them as Environment Variables on the server so your code can read them safely!
+
+
+# Module 10: Networking Essentials
+
+### Essential Networking Commands
+* `ip a` - Displays all network interfaces and the private IP address of the server.
+* `hostname -I` - Quickly displays only the server's IP address without the extra network clutter.
+* `ping -c 3 domain.com` - Tests internet connectivity by sending exactly 3 packets to check for packet loss. 
+* `sudo ufw status` - Checks if the Uncomplicated Firewall (UFW) is active or inactive.
+
+### Core Concepts
+* **Gateway:** The router connecting your local network (LAN) to the outside internet (WAN).
+* **CIDR Notation:** The `/24` at the end of an IP address (like `10.211.55.5/24`) defining the size of the network.
+* **Firewalls:** Block all incoming traffic by default when active. Ports must be explicitly opened (e.g., Port 80 for web) to host a website.
