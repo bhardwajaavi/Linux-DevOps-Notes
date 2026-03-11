@@ -131,3 +131,16 @@ Branches are isolated, alternate timelines of your code. They allow developers t
 ### Core Commands
 * `git merge <branch-name>` - Merges the specified branch into your *currently active* branch (Always make sure you `git checkout main` before merging a feature into it!).
 * `git rebase <branch-name>` - Rebases your current branch onto the target branch.
+
+
+
+## Module 7: Undoing Changes with Git
+
+### The 4 "Undo" Buttons of DevOps
+1. **`git restore <file>`:** Discards uncommitted, local changes in a file. It pulls the last saved version from the repository and overwrites your working file.
+2. **`git reset <commit-hash>`:** A time machine that rewinds your local commit history backward. 
+   * `--soft`: Keeps your code changes on the staging area.
+   * `--mixed`: Keeps your code changes in your working directory.
+   * `--hard`: **DANGER.** Completely deletes the commits AND your code changes.
+3. **`git revert <commit-hash>`:** The "Safe Undo" for public branches. Instead of deleting a bad commit, it creates a brand new commit that does the exact mathematical opposite of the mistake.
+4. **`git commit --amend`:** Unzips your very last commit so you can add a forgotten file or fix a typo in the commit message, then seamlessly zips it back up.
