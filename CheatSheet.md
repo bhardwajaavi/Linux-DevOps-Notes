@@ -106,3 +106,16 @@
 
 ### The Golden Rule of Git
 * You **must** be `cd`'d inside the specific project folder (the one containing the hidden `.git` directory) to run commands like `git status`, `git commit`, or `git log`. If you are outside the folder, Git will throw a `fatal: not a git repository` error.
+
+
+
+## Module 5: Git Branching and Workflow
+
+### The Power of Branching
+Branches are isolated, alternate timelines of your code. They allow developers to build and test new features safely without risking the stability of the `main` production code.
+
+### Core Branching Commands
+* `git branch <branch-name>` - Creates a new branch, but leaves you on your current branch.
+* `git checkout <branch-name>` - Moves your `HEAD` pointer to an existing branch.
+* `git checkout -b <branch-name>` - The Pro Shortcut: Creates a new branch AND immediately switches you to it.
+* `git branch -d <branch-name>` - Safely deletes a local branch after you are done with it.
