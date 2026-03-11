@@ -144,3 +144,16 @@ Branches are isolated, alternate timelines of your code. They allow developers t
    * `--hard`: **DANGER.** Completely deletes the commits AND your code changes.
 3. **`git revert <commit-hash>`:** The "Safe Undo" for public branches. Instead of deleting a bad commit, it creates a brand new commit that does the exact mathematical opposite of the mistake.
 4. **`git commit --amend`:** Unzips your very last commit so you can add a forgotten file or fix a typo in the commit message, then seamlessly zips it back up.
+
+
+
+## Module 8: Resolving Merge Conflicts
+
+### What is a Merge Conflict?
+A merge conflict is not an error! It happens when Git pauses a merge because two different branches modified the exact same line of the exact same file. Git halts the process and asks a human to decide which code to keep.
+
+### How to Resolve a Conflict (The 4-Step Process)
+1. **Identify:** Git injects alien markers (`<<<<<<<`, `=======`, `>>>>>>>`) into the conflicted file to show you exactly where the collision happened.
+2. **Edit:** Open the file in a text editor (like Vim or nano), delete the alien markers, and manually edit the code so it looks exactly how you want the final version to look.
+3. **Stage:** Save the file and tell Git you fixed it by running `git add <file-name>`.
+4. **Complete:** Finish the paused merge process by running `git merge --continue`.
