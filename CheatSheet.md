@@ -79,3 +79,19 @@
 * `git config --global user.email "your@email.com"` - Sets the author email.
 * `git init` - Transforms a standard directory into a tracked Git repository.
 * `git status` - The most used Git command. Tells you the current state of your repository, what branch you are on, and if there are pending changes.
+
+
+
+## Module 2: Basic Concepts of Git
+
+### Core Vocabulary
+* **Repository:** Your project folder with the hidden `.git` brain attached. Holds all files and version history.
+* **Commit:** A permanent "save state" snapshot of your code at a specific moment in time.
+* **Branch:** An independent, alternate timeline of your code where you can safely build new features without breaking the main project.
+* **HEAD:** A pointer indicating your current location in the repository (The "You Are Here" marker).
+
+### The 3-Step Commit Workflow
+* `git status` - Checks the state of your working directory (red = untracked/modified, green = staged).
+* `git add filename` - Moves a file to the Staging Area (the loading dock). Use `git add .` to stage ALL changed files at once.
+* `git commit -m "Your message here"` - Permanently locks the staged changes into a new commit snapshot.
+* `git log` - Displays the timeline history of all commits.
