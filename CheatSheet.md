@@ -49,3 +49,16 @@
 * **Gateway:** The router connecting your local network (LAN) to the outside internet (WAN).
 * **CIDR Notation:** The `/24` at the end of an IP address (like `10.211.55.5/24`) defining the size of the network.
 * **Firewalls:** Block all incoming traffic by default when active. Ports must be explicitly opened (e.g., Port 80 for web) to host a website.
+
+
+# Module 11: Secure Shell (SSH)
+
+### SSH Core Commands
+* `ssh user@ip_address` - Connects securely to a remote server.
+* `ssh-keygen` - Generates a new Public/Private cryptographic key pair (defaulting to the highly secure Ed25519 curve on modern systems).
+* `cat ~/.ssh/id_ed25519.pub` - Displays your public key so you can copy and paste it into GitHub or external servers.
+
+### SSH Architecture
+* **Public Key (.pub):** The padlock. Safe to share with the world.
+* **Private Key:** The physical key that unlocks the padlock. Stored securely on your local machine with strict `600` permissions. NEVER share, copy, or expose this file!
+* `~/.ssh/config` - A configuration file used to create fast shortcuts for connecting to multiple remote servers.
