@@ -62,3 +62,20 @@
 * **Public Key (.pub):** The padlock. Safe to share with the world.
 * **Private Key:** The physical key that unlocks the padlock. Stored securely on your local machine with strict `600` permissions. NEVER share, copy, or expose this file!
 * `~/.ssh/config` - A configuration file used to create fast shortcuts for connecting to multiple remote servers.
+
+
+
+
+# Git & GitHub Mastery
+
+## Module 1: Introduction to Version Control
+### Core Concepts
+* **Git:** A local software engine installed on your computer that tracks changes to your code over time. It works 100% offline.
+* **GitHub:** A cloud-based hosting service (owned by Microsoft) used to store, share, and collaborate on Git repositories.
+* **The `.git` folder:** A hidden directory created when you initialize Git. It acts as the "brain" and database for all your project's version history.
+
+### Essential Setup Commands
+* `git config --global user.name "Your Name"` - Sets the author name attached to all your future code snapshots.
+* `git config --global user.email "your@email.com"` - Sets the author email.
+* `git init` - Transforms a standard directory into a tracked Git repository.
+* `git status` - The most used Git command. Tells you the current state of your repository, what branch you are on, and if there are pending changes.
