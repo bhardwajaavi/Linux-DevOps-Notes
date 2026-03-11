@@ -95,3 +95,14 @@
 * `git add filename` - Moves a file to the Staging Area (the loading dock). Use `git add .` to stage ALL changed files at once.
 * `git commit -m "Your message here"` - Permanently locks the staged changes into a new commit snapshot.
 * `git log` - Displays the timeline history of all commits.
+
+
+
+## Module 4: Working with Git
+
+### Creating & Copying Repositories
+* `git init` - Initializes a brand new, empty Git repository in your current local directory.
+* `git clone <repository-url>` - Downloads an existing repository from a remote server (like GitHub) to your local machine, including all files and its entire `.git` history vault.
+
+### The Golden Rule of Git
+* You **must** be `cd`'d inside the specific project folder (the one containing the hidden `.git` directory) to run commands like `git status`, `git commit`, or `git log`. If you are outside the folder, Git will throw a `fatal: not a git repository` error.
