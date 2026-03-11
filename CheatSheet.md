@@ -119,3 +119,15 @@ Branches are isolated, alternate timelines of your code. They allow developers t
 * `git checkout <branch-name>` - Moves your `HEAD` pointer to an existing branch.
 * `git checkout -b <branch-name>` - The Pro Shortcut: Creates a new branch AND immediately switches you to it.
 * `git branch -d <branch-name>` - Safely deletes a local branch after you are done with it.
+
+
+
+## Module 6: Git Merge and Rebase
+
+### Combining Timelines
+* **Merge:** Takes a feature branch and safely ties it back into the `main` branch. It preserves the complete, exact history of everything that happened. 
+* **Rebase:** Rewrites history by taking your feature branch commits and placing them directly on top of the `main` branch, creating a perfectly straight, linear timeline. (Warning: Never rebase a public branch!)
+
+### Core Commands
+* `git merge <branch-name>` - Merges the specified branch into your *currently active* branch (Always make sure you `git checkout main` before merging a feature into it!).
+* `git rebase <branch-name>` - Rebases your current branch onto the target branch.
