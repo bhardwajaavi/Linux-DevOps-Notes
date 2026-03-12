@@ -157,3 +157,15 @@ A merge conflict is not an error! It happens when Git pauses a merge because two
 2. **Edit:** Open the file in a text editor (like Vim or nano), delete the alien markers, and manually edit the code so it looks exactly how you want the final version to look.
 3. **Stage:** Save the file and tell Git you fixed it by running `git add <file-name>`.
 4. **Complete:** Finish the paused merge process by running `git merge --continue`.
+
+
+
+## Module 9: SSH Keys & Authentication
+
+### What is SSH?
+Secure Shell (SSH) provides a highly secure way to authenticate with remote servers (like GitHub) without using a username and password. It uses a cryptographic key pair: a private key (which stays on your local machine) and a public key (which you give to the server).
+
+### Core SSH Commands
+* `ssh-keygen -t rsa -b 4096 -C "your_email@example.com"` - Generates a brand new 4096-bit RSA key pair.
+* `cat ~/.ssh/id_rsa.pub` - Prints your public key to the terminal so you can copy it to GitHub.
+* `ssh -T git@github.com` - Tests your connection to GitHub to verify your keys are working correctly.
