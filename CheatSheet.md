@@ -169,3 +169,18 @@ Secure Shell (SSH) provides a highly secure way to authenticate with remote serv
 * `ssh-keygen -t rsa -b 4096 -C "your_email@example.com"` - Generates a brand new 4096-bit RSA key pair.
 * `cat ~/.ssh/id_rsa.pub` - Prints your public key to the terminal so you can copy it to GitHub.
 * `ssh -T git@github.com` - Tests your connection to GitHub to verify your keys are working correctly.
+
+
+
+## Module 10: Git Clients (CLI vs. GUI)
+
+### The Command Line Interface (CLI)
+The industry standard for DevOps and Backend Engineering. It offers total control and is required for managing remote cloud servers where graphical interfaces do not exist.
+
+### Graphical User Interfaces (GUI)
+Visual tools that make it easier to see branch histories and complex merges. 
+* **GitHub Desktop:** Beginner-friendly, simple commits.
+* **SourceTree / GitKraken:** Advanced visualizers for complex enterprise branching (Git Flow).
+
+### The Ultimate CLI Visualizer
+* `git log --graph --oneline --all` - Draws a colorful, visual map of all branches and merges directly inside the text terminal, eliminating the strict need for a GUI.
