@@ -184,3 +184,13 @@ Visual tools that make it easier to see branch histories and complex merges.
 
 ### The Ultimate CLI Visualizer
 * `git log --graph --oneline --all` - Draws a colorful, visual map of all branches and merges directly inside the text terminal, eliminating the strict need for a GUI.
+
+
+
+## Module 11: Advanced Git Commands
+
+### The Surgical Tools
+* **`git cherry-pick <commit-hash>`:** Duplicates a single, specific commit from one branch and applies it to your current branch without merging the entire timeline. Perfect for emergency hotfixes.
+* **`git diff <commit1> <commit2>`:** Outputs a color-coded line-by-line comparison showing exactly what code was added or deleted between two snapshots.
+* **`git log --oneline`:** Condenses your commit history so each commit takes up exactly one line, making large repository histories easy to read.
+* **`git tag <tag-name>`:** Attaches a permanent, readable label (like `v1.0` or `production-release`) to a specific commit.
