@@ -194,3 +194,16 @@ Visual tools that make it easier to see branch histories and complex merges.
 * **`git diff <commit1> <commit2>`:** Outputs a color-coded line-by-line comparison showing exactly what code was added or deleted between two snapshots.
 * **`git log --oneline`:** Condenses your commit history so each commit takes up exactly one line, making large repository histories easy to read.
 * **`git tag <tag-name>`:** Attaches a permanent, readable label (like `v1.0` or `production-release`) to a specific commit.
+
+
+
+## Module 12: The Magical Pocket (Git Stash)
+
+### What is Stashing?
+When you are in the middle of working on broken or unfinished code, but you suddenly need to switch branches to fix an emergency, you use `git stash`. It acts as a temporary clipboard that holds your uncommitted changes so you can have a clean working directory.
+
+### Core Stash Commands
+* **`git stash`:** Takes all uncommitted modifications and saves them to a temporary pocket, leaving you with a clean working directory.
+* **`git stash list`:** Shows you a list of all the different changes you currently have stashed away.
+* **`git stash pop`:** Removes the most recently stashed files from the pocket and applies them back into your working directory.
+* **`git stash apply`:** Applies the stashed files to your working directory, but keeps a backup copy in the stash pocket.
