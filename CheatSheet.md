@@ -218,3 +218,18 @@ When working on a feature branch, developers often make dozens of small, messy c
 ### The Squash Merge Solution
 * **`git merge --squash <branch-name>`:** Takes all the commits from a feature branch, crushes them into a single chunk of changes, and places them on the staging area of your current branch.
 * **`git commit -m "Clean feature description"`:** After squashing, you create one single, clean commit to represent all the work, keeping the `main` branch history perfectly linear and professional.
+
+
+
+
+## Module 15: Interactive Rebasing (Rewriting History)
+
+### What is Interactive Rebasing?
+A powerful tool to clean up your local commit history before pushing to a shared remote repository. It allows you to pause time and modify commits that have already been made.
+* **⚠️ Golden Rule:** NEVER rebase commits that have already been pushed to a public branch.
+
+### Core Rebase Commands
+* **`git rebase -i HEAD~3`:** Opens an interactive editor for the last 3 commits.
+  * Change `pick` to `reword` (or `r`) to change a commit message.
+  * Change `pick` to `squash` (or `s`) to meld a commit into the previous one.
+  * Change `pick` to `drop` (or `d`) to completely delete a commit.
