@@ -207,3 +207,14 @@ When you are in the middle of working on broken or unfinished code, but you sudd
 * **`git stash list`:** Shows you a list of all the different changes you currently have stashed away.
 * **`git stash pop`:** Removes the most recently stashed files from the pocket and applies them back into your working directory.
 * **`git stash apply`:** Applies the stashed files to your working directory, but keeps a backup copy in the stash pocket.
+
+
+
+## Module 13: Advanced Merging (Squash)
+
+### The Problem with Normal Merges
+When working on a feature branch, developers often make dozens of small, messy commits ("wip", "fixing typo", "forgot file"). Merging these normally clutters the main repository history.
+
+### The Squash Merge Solution
+* **`git merge --squash <branch-name>`:** Takes all the commits from a feature branch, crushes them into a single chunk of changes, and places them on the staging area of your current branch.
+* **`git commit -m "Clean feature description"`:** After squashing, you create one single, clean commit to represent all the work, keeping the `main` branch history perfectly linear and professional.
