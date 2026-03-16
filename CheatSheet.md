@@ -233,3 +233,45 @@ A powerful tool to clean up your local commit history before pushing to a shared
   * Change `pick` to `reword` (or `r`) to change a commit message.
   * Change `pick` to `squash` (or `s`) to meld a commit into the previous one.
   * Change `pick` to `drop` (or `d`) to completely delete a commit.
+
+
+
+
+# Phase 2: DevOps Packaging & Containerization
+
+## Module 1: Build Tools & Artifacts (Python)
+
+### Core Concepts
+* **Package Manager (`pip`, `npm`, `Maven`):** The tool that downloads external libraries (dependencies) from the internet into your project.
+* **Virtual Environment (`venv`):** An isolated "clean room" on your server. Packages installed here will not break the rest of your computer.
+* **Artifact:** The final, deployable package or recipe. In standard Python, this is your `requirements.txt` file.
+* **Artifact Repository:** The digital warehouse (like Nexus or Docker Hub) where finished artifacts are stored for production servers to download.
+
+### Python Build Commands
+| Command | What It Does |
+| :--- | :--- |
+| `python3 -m venv my_env` | Creates an isolated virtual environment named `my_env`. |
+| `source my_env/bin/activate` | Enters the virtual environment (activates the clean room). |
+| `pip install <package>` | Downloads and installs a package *only* inside the active environment. |
+| `pip freeze > requirements.txt` | Takes a snapshot of all installed packages and saves it as an artifact. |
+| `deactivate` | Exits the virtual environment and returns to the normal Linux terminal. |
+
+---
+
+## Module 2: Docker Fundamentals
+
+### Core Concepts
+* **Docker Image:** The read-only blueprint or template. It contains your OS, code, and dependencies perfectly packaged together.
+* **Docker Container:** The running, isolated steel box created from the Image. You can run hundreds of identical containers from one single image.
+* **Containers vs. VMs:** Virtual Machines require an entire heavy Operating System to run. Docker containers are lightweight because they share the host server's Linux kernel.
+* **Docker Daemon:** The background manager on your server that actually builds, runs, and downloads containers.
+* **Docker Registry:** The global internet warehouse (Docker Hub) where you download official images.
+
+### Docker Installation & Setup Commands
+| Command | What It Does |
+| :--- | :--- |
+| `sudo apt install docker.io -y` | Installs the core Docker engine on an Ubuntu server. |
+| `sudo usermod -aG docker parallels` | Grants your specific user VIP permission to command the Docker Daemon without typing `sudo` every time. |
+| `newgrp docker` | Refreshes your terminal permissions instantly to activate the VIP pass. |
+| `docker --version` | Verifies the Docker engine is installed and running. |
+| `docker run hello-world` | Reaches out to the internet, pulls the official `hello-world` image, and runs it inside a secure container. |
