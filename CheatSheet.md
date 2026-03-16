@@ -275,3 +275,21 @@ A powerful tool to clean up your local commit history before pushing to a shared
 | `newgrp docker` | Refreshes your terminal permissions instantly to activate the VIP pass. |
 | `docker --version` | Verifies the Docker engine is installed and running. |
 | `docker run hello-world` | Reaches out to the internet, pulls the official `hello-world` image, and runs it inside a secure container. |
+
+
+
+
+## Module 3: Docker Commands & Debugging
+
+### Core Operations
+* **`docker pull <image>`:** Downloads a blueprint from Docker Hub without running it.
+* **`docker images`:** Lists all downloaded blueprints sitting in your local warehouse.
+* **`docker ps`:** The active radar. Lists all currently running containers.
+* **`docker ps -a`:** Lists ALL containers, including ones that have crashed or stopped.
+* **`docker run -d -p 8080:80 --name my_website nginx`:** * `-d`: Runs the container in the background (detached).
+  * `-p 8080:80`: Drills a hole mapping your host machine's port 8080 to the container's port 80.
+  * `--name`: Gives the container a human-readable name instead of a random hash.
+
+### Debugging & Hacking
+* **`docker logs <container_name>`:** Prints the internal server logs (errors, print statements, web traffic).
+* **`docker exec -it <container_name> bash`:** Infiltrates a running container and opens an interactive root terminal inside it.
