@@ -293,3 +293,434 @@ A powerful tool to clean up your local commit history before pushing to a shared
 ### Debugging & Hacking
 * **`docker logs <container_name>`:** Prints the internal server logs (errors, print statements, web traffic).
 * **`docker exec -it <container_name> bash`:** Infiltrates a running container and opens an interactive root terminal inside it.
+
+
+
+
+
+
+
+
+
+
+
+# 🐳 Docker — Complete DevOps Cheatsheet
+
+---
+
+## Module 1: What is Docker & How It Works
+
+### Core Concepts
+
+* **The Problem Docker Solves:** Eliminates the "It works on my machine" problem by packaging your app together with everything it needs — OS layer, runtime, libraries, config — into one portable, isolated unit.
+* **Docker Image:** The read-only blueprint or recipe. It describes exactly what the container should contain. Sits there and does nothing on its own.
+* **Docker Container:** The live, running instance created from an image. One image can run hundreds of identical containers simultaneously.
+* **Docker Engine:** The complete background service installed on your machine that makes everything work.
+* **Docker Daemon (`dockerd`):** The actual server process inside the Engine that does the heavy lifting — building, running, and managing containers.
+* **Docker Client (`docker`):** The CLI tool you type commands into. Sends your instructions to the Daemon and returns the result.
+* **Docker Hub:** The global public library (registry) of pre-built images. The Daemon pulls from here automatically when an image isn't found locally.
+
+### Containers vs. Virtual Machines
+
+| | Virtual Machine | Docker Container |
+| --- | --- | --- |
+| **Includes** | Full OS + your app | Just your app + its dependencies |
+| **Size** | GBs | MBs |
+| **Startup Time** | Minutes | Seconds |
+| **Isolation** | Complete (hypervisor) | Process-level (shared kernel) |
+
+### The Restaurant Analogy
+
+* **You** = Docker Client (you place the order)
+* **Waiter** = Docker Daemon (takes the order to the kitchen)
+* **Kitchen** = Docker Engine (produces the result)
+
+---
+
+## Module 2: Images vs. Containers
+
+### Core Concepts
+
+* **Image:** A static, read-only blueprint. Like a `.exe` installer file — it just sits there.
+* **Container:** A live, running process built from the image. Like the installed, running application.
+* **Key Rule:** One image → infinite containers. You can run 5, 10, or 1000 containers from a single image simultaneously.
+
+### Essential Image Commands
+
+| Command | What It Does |
+| --- | --- |
+| `docker images` | Lists all images downloaded on your local machine. |
+| `docker pull <image>` | Downloads an image from Docker Hub without running it. |
+| `docker rmi <image>` | Deletes a downloaded image from your machine. |
+| `docker image prune` | Deletes all unused (dangling) images at once. |
+
+---
+
+## Module 3: Essential Container Commands
+
+### Viewing Containers
+
+| Command | What It Does |
+| --- | --- |
+| `docker ps` | Lists ONLY currently running containers. |
+| `docker ps -a` | Lists ALL containers — running AND stopped. |
+
+### Reading `docker ps` Output
+
+| Column | Meaning |
+| --- | --- |
+| `CONTAINER ID` | Unique short ID for that specific instance. |
+| `IMAGE` | The blueprint it was built from. |
+| `COMMAND` | The exact process running inside it. |
+| `STATUS` | `Exited (0)` = success. `Exited (1)` = crashed. |
+| `PORTS` | Port mappings between host and container. |
+| `NAMES` | Human-readable name (auto-assigned if not set). |
+
+### Starting & Stopping
+
+| Command | What It Does |
+| --- | --- |
+| `docker start <name>` | Restarts a stopped container. |
+| `docker stop <name>` | Gracefully stops a running container. |
+| `docker restart <name>` | Stops and starts a container in one command. |
+
+### Cleaning Up
+
+| Command | What It Does |
+| --- | --- |
+| `docker rm <name>` | Deletes a stopped container permanently. |
+| `docker rm -f <name>` | Force-deletes a container even if it's running. |
+| `docker container prune` | Deletes ALL stopped containers at once. |
+
+### Inspecting & Debugging
+
+| Command | What It Does |
+| --- | --- |
+| `docker logs <name>` | Prints everything the container has ever printed to stdout. |
+| `docker inspect <name>` | Returns a deep JSON dump of all container configuration details. |
+
+---
+
+## Module 4: `docker run` — Flags You Must Know
+
+### The Most Important Command
+
+`docker run` creates and starts a brand new container from an image. Almost always used with flags in real DevOps work.
+
+### Core Flags
+
+| Flag | Purpose | Example |
+| --- | --- | --- |
+| `-d` | Detached mode — runs in background, gives terminal back. | `docker run -d nginx` |
+| `--name` | Assigns a human-readable name instead of a random one. | `--name my_webserver` |
+| `-p host:container` | Maps a port on your machine to a port inside the container. | `-p 8080:80` |
+| `-it` | Interactive terminal — drops you inside the container with a live shell. | `docker run -it ubuntu bash` |
+| `-v` | Volume mount — connects a folder on your host to a folder in the container. | `-v ~/data:/app/data` |
+| `--rm` | Automatically deletes the container when it stops. | `docker run --rm nginx` |
+| `-e` | Sets an environment variable inside the container. | `-e DB_PASSWORD=secret` |
+
+### The Full Production-Style Command
+
+```bash
+docker run -d \
+  --name my_webserver \
+  -p 8080:80 \
+  -v ~/mydata:/usr/share/nginx/html \
+  nginx
+#     ^
+#   Image name always goes last
+```
+
+### Port Mapping Explained
+
+```
+-p 8080:80
+    ^    ^
+    |    └── Port INSIDE the container (where the app listens)
+    └─────── Port on YOUR machine (what you type in the browser)
+```
+
+---
+
+## Module 5: `docker exec` — Getting Inside a Running Container
+
+### Core Concept
+
+* **`docker exec`:** Runs a command inside an **already running** container. Essential for live debugging.
+
+### `exec` vs `run`
+
+| | `docker run` | `docker exec` |
+| --- | --- | --- |
+| **Creates** | A brand new container from an image. | Nothing — uses an existing running container. |
+| **Needs** | An image name. | A running container name/ID. |
+| **Use case** | Starting fresh. | Debugging a live container. |
+
+### Core Commands
+
+| Command | What It Does |
+| --- | --- |
+| `docker exec -it <name> bash` | Opens an interactive bash shell inside the container. |
+| `docker exec -it <name> sh` | Use `sh` if the container doesn't have `bash` (e.g. Alpine Linux). |
+| `docker exec <name> <command>` | Runs a single command and returns the output without entering. |
+
+### ⚠️ Important
+
+* Container names are **case-sensitive** and **exact**. `my_web_server` and `my_webserver` are completely different containers. Docker will throw `No such container` on the slightest typo.
+
+---
+
+## Module 6: Volumes — Keeping Data Alive
+
+### The Problem
+
+Containers are disposable by design. When a container is deleted, **everything written inside it is gone forever** — database records, uploaded files, logs. This is catastrophic for stateful applications.
+
+### The Solution
+
+A Volume connects a folder on your host machine to a folder inside the container. The app writes data normally, but the data physically lives on your host — safe from container deletion.
+
+```
+Your Host Machine              Container
+~/mydata/          <──────>   /app/data/
+     ↑
+Data lives here — survives container death
+```
+
+### The Golden Rule
+
+> **Anything you cannot afford to lose must live in a Volume.** Databases, user uploads, logs, config files.
+
+### Two Types of Volumes
+
+| Type | Command Style | Best For |
+| --- | --- | --- |
+| **Bind Mount** | `-v /absolute/host/path:/container/path` | Development — you see exactly where files are. |
+| **Named Volume** | `-v my_volume_name:/container/path` | Production — Docker manages the location for you. |
+
+### Essential Volume Commands
+
+| Command | What It Does |
+| --- | --- |
+| `docker volume ls` | Lists all named volumes managed by Docker. |
+| `docker volume create <name>` | Creates a named volume manually. |
+| `docker volume inspect <name>` | Shows where Docker stored the volume data on your host. |
+| `docker volume rm <name>` | Deletes a named volume permanently. |
+| `docker volume prune` | Deletes all unused named volumes at once. |
+
+### Path Rules for `-v`
+
+* Docker's `-v` flag **always requires an absolute path** on the host side.
+* Use `~` as a shortcut for `/home/your_username/` — it's always absolute.
+* Use `$(pwd)/folder` to reference a folder relative to your current directory.
+
+```bash
+# These are all valid absolute paths:
+-v ~/mydata:/app/data
+-v /home/parallels/mydata:/app/data
+-v $(pwd)/mydata:/app/data
+```
+
+---
+
+## Module 7: Docker Networking
+
+### Core Concept
+
+By default, every container runs in complete network isolation. Containers cannot talk to each other or the outside world unless you explicitly connect them.
+
+### Default Network Drivers
+
+| Driver | What It Does |
+| --- | --- |
+| `bridge` | The default. Creates a private internal network. Containers on the same bridge can talk to each other by IP. |
+| `host` | Removes isolation. Container shares your machine's network directly. |
+| `none` | Completely disables all networking for the container. |
+
+### Custom Bridge Networks — The Right Way
+
+Running containers on a custom network allows them to reach each other **by container name** instead of by IP address (which changes every time). This is how production systems are built.
+
+```bash
+# Create a custom network
+docker network create my_network
+
+# Run containers ON that network
+docker run -d --name web --network my_network nginx
+docker run -d --name db  --network my_network mysql
+
+# Now 'web' can reach 'db' simply by typing 'db' as the hostname
+```
+
+### Essential Networking Commands
+
+| Command | What It Does |
+| --- | --- |
+| `docker network ls` | Lists all networks on your machine. |
+| `docker network create <name>` | Creates a new custom bridge network. |
+| `docker network inspect <name>` | Shows all containers connected to a network and their IPs. |
+| `docker network connect <network> <container>` | Connects a running container to a network. |
+| `docker network rm <name>` | Deletes a network (all containers must be disconnected first). |
+
+---
+
+## Module 8: Dockerfiles — Building Your Own Images
+
+### Core Concept
+
+A **Dockerfile** is a plain text recipe file that tells Docker how to build a custom image for your application. Every line is an instruction that adds a layer to the image.
+
+### Essential Dockerfile Instructions
+
+| Instruction | Purpose | Example |
+| --- | --- | --- |
+| `FROM` | **Always first.** Sets the base image to build on top of. | `FROM python:3.11-slim` |
+| `WORKDIR` | Sets the working directory inside the container. All following commands run from here. | `WORKDIR /app` |
+| `COPY` | Copies files from your host machine into the image. | `COPY . .` |
+| `RUN` | Executes a shell command **during the build** (installs dependencies, etc.). | `RUN pip install -r requirements.txt` |
+| `EXPOSE` | Documents which port the app listens on (informational, doesn't actually open it). | `EXPOSE 5000` |
+| `ENV` | Sets an environment variable inside the image. | `ENV DEBUG=False` |
+| `CMD` | The default command to run when a container starts. Only one allowed. | `CMD ["python", "app.py"]` |
+| `ENTRYPOINT` | Like CMD but harder to override. Sets the container's main executable. | `ENTRYPOINT ["gunicorn"]` |
+
+### A Complete Python Dockerfile
+
+```dockerfile
+# 1. Start from an official lightweight Python image
+FROM python:3.11-slim
+
+# 2. Set the working directory inside the container
+WORKDIR /app
+
+# 3. Copy the requirements file first (for layer caching)
+COPY requirements.txt .
+
+# 4. Install dependencies
+RUN pip install -r requirements.txt
+
+# 5. Copy the rest of the application code
+COPY . .
+
+# 6. Document the port the app uses
+EXPOSE 5000
+
+# 7. The command to run when the container starts
+CMD ["python", "app.py"]
+```
+
+### Build & Run Commands
+
+| Command | What It Does |
+| --- | --- |
+| `docker build -t my-app .` | Builds an image from the Dockerfile in the current directory and tags it `my-app`. |
+| `docker build -t my-app:v1.0 .` | Builds and tags with a version number. |
+| `docker run -d -p 5000:5000 my-app` | Runs a container from your freshly built image. |
+
+### Layer Caching — The Performance Rule
+
+Docker builds images **layer by layer** and caches each one. If a layer hasn't changed, Docker reuses the cached version instead of rebuilding it. **Always copy `requirements.txt` and install dependencies BEFORE copying your application code.** This way, a code change doesn't force Docker to reinstall all packages.
+
+---
+
+## Module 9: Docker Compose — Running Multi-Container Apps
+
+### Core Concept
+
+Real applications are never just one container. A typical web app has a web server, a database, and a cache — all as separate containers. **Docker Compose** lets you define and run all of them together with a single file and a single command.
+
+### The `docker-compose.yml` File
+
+```yaml
+version: '3.8'
+
+services:
+
+  web:
+    build: .                      # Build from Dockerfile in current directory
+    ports:
+      - "5000:5000"               # Map host port to container port
+    volumes:
+      - .:/app                    # Mount current directory for live code reload
+    environment:
+      - DB_HOST=db                # Use the service name 'db' as the hostname
+    depends_on:
+      - db                        # Wait for db to start first
+
+  db:
+    image: mysql:8.0              # Pull official image — no Dockerfile needed
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=myapp
+    volumes:
+      - db_data:/var/lib/mysql    # Named volume to persist database data
+
+volumes:
+  db_data:                        # Declare the named volume here
+```
+
+### Essential Docker Compose Commands
+
+| Command | What It Does |
+| --- | --- |
+| `docker compose up` | Starts all services defined in `docker-compose.yml`. |
+| `docker compose up -d` | Starts all services in the background (detached mode). |
+| `docker compose up --build` | Forces a rebuild of images before starting. |
+| `docker compose down` | Stops and removes all containers, networks created by Compose. |
+| `docker compose down -v` | Same as above, but also deletes the named volumes (⚠️ data loss). |
+| `docker compose ps` | Lists all containers managed by the current Compose file. |
+| `docker compose logs` | Shows logs from all services combined. |
+| `docker compose logs <service>` | Shows logs from one specific service. |
+| `docker compose exec <service> bash` | Opens a shell inside a running Compose service. |
+| `docker compose restart <service>` | Restarts a single service without stopping others. |
+
+### Key Compose Concepts
+
+* **Services:** Each container in your stack (e.g., `web`, `db`, `redis`).
+* **`depends_on`:** Controls startup order — but does not wait for the app inside to be *ready*, only for the container to *start*.
+* **Automatic Networking:** Compose automatically creates a shared network for all services. Services reach each other using their **service name** as the hostname (e.g., `db`, `redis`).
+* **Named Volumes in Compose:** Declare all named volumes under the top-level `volumes:` key or Docker will throw an error.
+
+---
+
+## Quick Reference: The Most Used Commands
+
+```bash
+# ── Images ────────────────────────────────────────────
+docker images                          # List all local images
+docker pull nginx                      # Download image without running
+docker rmi nginx                       # Delete an image
+
+# ── Containers ────────────────────────────────────────
+docker ps                              # Running containers
+docker ps -a                           # All containers
+docker run -d --name web -p 8080:80 nginx   # Run detached with name + port
+docker stop web                        # Stop container
+docker start web                       # Start stopped container
+docker rm -f web                       # Force delete container
+docker container prune                 # Delete all stopped containers
+
+# ── Debugging ─────────────────────────────────────────
+docker logs web                        # View container logs
+docker exec -it web bash               # Shell into running container
+docker inspect web                     # Full JSON details
+
+# ── Volumes ───────────────────────────────────────────
+docker volume ls                       # List all volumes
+docker volume create mydata            # Create named volume
+docker volume prune                    # Delete unused volumes
+
+# ── Networks ──────────────────────────────────────────
+docker network ls                      # List all networks
+docker network create mynet            # Create custom network
+docker network inspect mynet          # Inspect network
+
+# ── Build ─────────────────────────────────────────────
+docker build -t my-app .               # Build image from Dockerfile
+docker build -t my-app:v1.0 .          # Build with version tag
+
+# ── Compose ───────────────────────────────────────────
+docker compose up -d                   # Start all services background
+docker compose down                    # Stop and remove all
+docker compose logs -f                 # Follow live logs
+docker compose exec web bash          # Shell into a compose service
+```
