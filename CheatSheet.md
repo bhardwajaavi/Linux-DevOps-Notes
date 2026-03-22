@@ -724,3 +724,339 @@ docker compose down                    # Stop and remove all
 docker compose logs -f                 # Follow live logs
 docker compose exec web bash          # Shell into a compose service
 ```
+
+
+
+
+## Module 4: `docker run` Flags
+
+### The Most Important Command
+
+`docker run` creates and starts a brand new container from an image. Almost always used with flags in real DevOps work. The image name **always goes last**.
+
+### Core Flags
+
+| Flag | Purpose | Example |
+| --- | --- | --- |
+| `-d` | Detached mode — runs container in the background and gives your terminal back immediately. | `docker run -d nginx` |
+| `--name` | Assigns a human-readable name instead of a random auto-generated one like `quirky_feynman`. | `--name my_webserver` |
+| `-p host:container` | Port mapping — punches a hole from your machine into the container. | `-p 8080:80` |
+| `-it` | Interactive terminal — drops you inside the container with a live shell. | `docker run -it ubuntu bash` |
+| `-v` | Volume mount — connects a folder on your host to a folder inside the container. | `-v ~/data:/app/data` |
+| `--rm` | Automatically deletes the container the moment it stops. | `docker run --rm nginx` |
+| `-e` | Sets an environment variable inside the container at runtime. | `-e DB_PASSWORD=secret` |
+| `--network` | Connects the container to a specific custom network. | `--network my_network` |
+
+### Port Mapping — The Mental Model
+
+```
+-p 8080:80
+    ^    ^
+    |    └── Port INSIDE the container (where the app listens)
+    └─────── Port on YOUR machine (what you type in the browser)
+```
+
+### The Full Production-Style Command
+
+```bash
+docker run -d \
+  --name my_webserver \
+  -p 8080:80 \
+  --network my_network \
+  -v ~/mydata:/usr/share/nginx/html \
+  -e ENV=production \
+  nginx
+#  ^ Image name always goes last
+```
+
+---
+
+## Module 5: `docker exec` — Getting Inside a Running Container
+
+### Core Concept
+
+* **`docker exec`:** Runs a command inside an **already running** container without creating a new one. The most important debugging tool in Docker.
+* **`docker run` vs `docker exec`:** `run` creates a brand new container from an image. `exec` enters an existing running container. Use `exec` when the container is already up and you need to investigate it.
+
+### Core Commands
+
+| Command | What It Does |
+| --- | --- |
+| `docker exec -it <n> bash` | Opens an interactive bash shell inside the container. |
+| `docker exec -it <n> sh` | Use `sh` instead of `bash` for lightweight images (e.g., Alpine Linux). |
+| `docker exec <n> <command>` | Runs a single one-off command and returns the output without entering. |
+
+### Real World Usage
+
+```bash
+# Shell into a running container to debug
+docker exec -it my_webserver bash
+
+# Once inside, inspect files and configs
+cat /etc/nginx/nginx.conf
+ls /usr/share/nginx/html
+
+# Exit and return to your machine
+exit
+```
+
+### Critical Rule
+
+* Container names are **case-sensitive** and **exact**. `my_web_server` and `my_webserver` are completely different containers to Docker. A single typo throws `Error: No such container`.
+
+---
+
+## Module 6: Volumes — Keeping Data Alive
+
+### The Problem
+
+Containers are **disposable by design**. When a container is deleted, everything written inside it — database records, uploaded files, logs — is gone forever. This is catastrophic for any app that stores data.
+
+### The Solution
+
+A Volume connects a folder on your **host machine** to a folder **inside the container**. The app reads and writes normally, but the data physically lives on your host — completely safe from container deletion.
+
+```
+Your Host Machine              Container (can be deleted freely)
+~/mydata/          <──────>    /app/data/
+     ↑
+ Data lives here permanently
+```
+
+### The Golden Rule of Volumes
+
+* **Anything you cannot afford to lose must live in a Volume.** Databases, user uploads, logs, and config files must always be mounted.
+
+### Two Types of Volumes
+
+| Type | Syntax | Best For |
+| --- | --- | --- |
+| **Bind Mount** | `-v /absolute/host/path:/container/path` | Development — you control the exact location and can see the files directly. |
+| **Named Volume** | `-v my_volume_name:/container/path` | Production — Docker manages the storage location for you. |
+
+### Path Rules for `-v`
+
+* Docker's `-v` flag always requires an **absolute path** on the host side. Never a relative path.
+* Use `~` as a shorthand for `/home/your_username/` — it is always absolute.
+* Use `$(pwd)/folder` to reference a folder relative to your current directory.
+
+### Essential Volume Commands
+
+| Command | What It Does |
+| --- | --- |
+| `docker volume ls` | Lists all named volumes managed by Docker. |
+| `docker volume create <n>` | Creates a named volume manually. |
+| `docker volume inspect <n>` | Shows the exact location on your host where Docker stored the volume data. |
+| `docker volume rm <n>` | Permanently deletes a named volume and all its data. |
+| `docker volume prune` | Deletes all named volumes not currently in use by a container. |
+
+---
+
+## Module 7: Docker Networking
+
+### Core Concept
+
+Every container runs in **complete network isolation** by default. Containers cannot see each other or the outside world unless you explicitly connect them through a network.
+
+### Default Network Drivers
+
+| Driver | What It Does |
+| --- | --- |
+| `bridge` | The default network. Every container joins this unless told otherwise. Containers can only reach each other by IP address — which changes on every restart. |
+| `host` | Removes network isolation entirely. Container shares your machine's network stack directly. |
+| `none` | Completely disables all networking for the container. |
+
+### Why You Should Always Use a Custom Network
+
+On the default `bridge` network, containers can only reach each other by IP address — and those IPs change every time a container restarts. A custom network gives you **container name resolution for free** — containers reach each other by using the container name as the hostname. No IP addresses needed ever.
+
+```bash
+# Create a custom network
+docker network create my_network
+
+# Connect containers to it at runtime
+docker run -d --name web_app --network my_network nginx
+docker run -d --name database --network my_network mysql
+
+# web_app can now reach database simply by name
+# curl http://database:3306  ← works perfectly
+```
+
+### Essential Networking Commands
+
+| Command | What It Does |
+| --- | --- |
+| `docker network ls` | Lists all networks currently on your machine. |
+| `docker network create <n>` | Creates a new custom bridge network. |
+| `docker network inspect <n>` | Shows all containers connected to the network and their assigned IPs. |
+| `docker network connect <network> <container>` | Connects an already running container to a network. |
+| `docker network rm <n>` | Deletes a network (all containers must be disconnected first). |
+
+---
+
+## Module 8: Dockerfiles — Building Your Own Images
+
+### Core Concept
+
+* **Dockerfile:** A plain text file — literally named `Dockerfile` with no extension — containing step-by-step instructions that tell Docker how to build a custom image for your application. Every instruction adds a new layer to the image.
+
+### Essential Dockerfile Instructions
+
+| Instruction | Purpose | Example |
+| --- | --- | --- |
+| `FROM` | **Always the first line.** Sets the official base image to build on top of. | `FROM python:3.11-slim` |
+| `WORKDIR` | Sets the working directory inside the container. All following commands run from here. | `WORKDIR /app` |
+| `COPY` | Copies files from your host machine into the image at build time. | `COPY . .` |
+| `RUN` | Executes a shell command **during the build** — used for installing packages. | `RUN pip install -r requirements.txt` |
+| `EXPOSE` | Documents which port the app listens on. Informational only — does not actually open it. | `EXPOSE 5000` |
+| `ENV` | Sets a permanent environment variable baked into the image. | `ENV DEBUG=False` |
+| `CMD` | The default command to run when the container starts. Only one `CMD` is allowed per Dockerfile. | `CMD ["python", "app.py"]` |
+| `ENTRYPOINT` | Like `CMD` but harder to override. Sets the container's fixed main executable. | `ENTRYPOINT ["gunicorn"]` |
+
+### A Complete Production-Ready Python Dockerfile
+
+```dockerfile
+# 1. Start from an official lightweight Python base image
+FROM python:3.11-slim
+
+# 2. Set the working directory inside the container
+WORKDIR /app
+
+# 3. Copy requirements FIRST — critical for layer caching
+COPY requirements.txt .
+
+# 4. Install all dependencies during the build
+RUN pip install -r requirements.txt
+
+# 5. Now copy the rest of the application code
+COPY . .
+
+# 6. Document the port the app listens on
+EXPOSE 5000
+
+# 7. The command that runs when a container starts
+CMD ["python", "app.py"]
+```
+
+### Build Commands
+
+| Command | What It Does |
+| --- | --- |
+| `docker build -t my-app .` | Builds an image from the Dockerfile in the current directory. The `.` means look here. |
+| `docker build -t my-app:v1.0 .` | Builds and tags with a specific version number. Best practice in production. |
+| `docker run -d -p 5000:5000 my-app` | Runs a container from your freshly built custom image. |
+
+### Layer Caching — The Most Important Performance Rule
+
+Docker builds images layer by layer and **caches every layer**. If nothing changed in a layer since the last build, Docker reuses the cached version and skips rebuilding it. Always copy `requirements.txt` and run `pip install` **before** copying your application code. That way when you change your code, Docker reuses the cached pip install layer and only rebuilds the last two steps instead of reinstalling every package from scratch.
+
+---
+
+## Module 9: Docker Compose — Running Multi-Container Apps
+
+### Core Concept
+
+* **Docker Compose:** A tool that lets you define your entire application stack — every container, network, and volume — in a single `docker-compose.yml` file and control everything with one command.
+* **The Problem It Solves:** A real app needs multiple containers (web server, database, cache). Without Compose, you must manually run 5+ `docker run` commands, create networks, and wire everything together by hand every single time.
+
+### The `docker-compose.yml` Structure
+
+```yaml
+services:
+
+  web:                              # Service 1 — Your Flask app
+    build: .                        # Build from Dockerfile in current directory
+    ports:
+      - "5000:5000"                 # Same as -p in docker run
+    environment:
+      - DB_HOST=db                  # Use the service name as the hostname
+    depends_on:
+      - db                          # Start db container before web
+
+  db:                               # Service 2 — MySQL Database
+    image: mysql:8.0                # Pull ready-made image — no Dockerfile needed
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=myapp
+    volumes:
+      - db_data:/var/lib/mysql      # Named volume to persist all database data
+
+volumes:
+  db_data:                          # Must declare all named volumes at the top level
+```
+
+### Essential Docker Compose Commands
+
+| Command | What It Does |
+| --- | --- |
+| `docker compose up` | Starts all services and attaches to their logs in your terminal. |
+| `docker compose up -d` | Starts all services in the background (detached). The command you use most. |
+| `docker compose up --build` | Forces Docker to rebuild images before starting. Use when you changed your code. |
+| `docker compose down` | Stops and removes all containers and networks created by Compose. |
+| `docker compose down -v` | Same as above but also deletes named volumes. ⚠️ Permanently destroys all data. |
+| `docker compose ps` | Lists all containers managed by the current Compose file and their status. |
+| `docker compose logs` | Shows combined logs from all running services. |
+| `docker compose logs <service>` | Shows logs from one specific service only. |
+| `docker compose logs -f` | Follows logs live in real time. |
+| `docker compose exec <service> bash` | Opens a shell inside a running Compose service. |
+| `docker compose restart <service>` | Restarts a single service without touching the others. |
+
+### Key Compose Concepts
+
+* **Services:** Each container in your stack. Every service becomes a running container when you run `docker compose up`.
+* **Automatic Networking:** Compose automatically creates a custom bridge network for all services. Every service is reachable by its service name as the hostname — no IP addresses needed.
+* **`depends_on`:** Controls startup order — starts `db` before `web`. Note: it only waits for the container to start, not for the app inside to be fully ready.
+* **Named Volumes:** All named volumes must be declared under the top-level `volumes:` key at the bottom of the file or Docker will throw an error.
+* **`version` key:** Modern Docker Compose no longer requires the `version:` field. If you see a warning saying it is obsolete, simply remove that line.
+
+---
+
+## Quick Reference — Most Used Docker Commands
+
+```bash
+# ── Images ─────────────────────────────────────────────────
+docker images                           # List all local images
+docker pull nginx                       # Download image without running
+docker rmi nginx                        # Delete a local image
+docker image prune                      # Delete all unused images
+
+# ── Containers ─────────────────────────────────────────────
+docker ps                               # Show only running containers
+docker ps -a                            # Show ALL containers including stopped
+docker run -d --name web -p 8080:80 nginx   # Run detached, named, with port
+docker stop web                         # Gracefully stop a container
+docker start web                        # Restart a stopped container
+docker rm -f web                        # Force delete a container
+docker container prune                  # Delete ALL stopped containers
+
+# ── Debugging ──────────────────────────────────────────────
+docker logs web                         # View container output logs
+docker logs -f web                      # Follow logs live in real time
+docker exec -it web bash                # Get a shell inside a running container
+docker inspect web                      # Full JSON details of a container
+
+# ── Volumes ────────────────────────────────────────────────
+docker volume ls                        # List all named volumes
+docker volume create mydata             # Create a named volume
+docker volume inspect mydata            # See where Docker stored it on host
+docker volume prune                     # Delete all unused volumes
+
+# ── Networks ───────────────────────────────────────────────
+docker network ls                       # List all networks
+docker network create mynet             # Create a custom bridge network
+docker network inspect mynet            # See containers on the network
+
+# ── Build ──────────────────────────────────────────────────
+docker build -t my-app .                # Build image from Dockerfile here
+docker build -t my-app:v1.0 .           # Build with a version tag
+
+# ── Compose ────────────────────────────────────────────────
+docker compose up -d                    # Start all services in background
+docker compose up --build               # Rebuild images and start
+docker compose down                     # Stop and remove everything
+docker compose down -v                  # Also delete volumes ⚠️ data loss
+docker compose ps                       # List all compose containers
+docker compose logs -f                  # Follow live logs from all services
+docker compose exec web bash            # Shell into a compose service
+docker compose restart web              # Restart one service only
+```
